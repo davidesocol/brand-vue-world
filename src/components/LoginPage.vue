@@ -1,6 +1,6 @@
 <script setup lang="ts">
     import { useLoginStore } from '@/stores/login'
-    import { useUsersStore } from '@/stores/users'
+    import { useUsersStore, User } from '@/stores/users'
     import { ref } from 'vue'
 
     const loginStore = useLoginStore()
@@ -19,6 +19,15 @@
             showAlert.value = true
         }
     }
+
+    function randomLogin() {
+        const pickedUser = pickRandomUser()
+        loginStore.login(pickedUser.email! , "pwd")
+    }
+
+    function pickRandomUser(): User {
+        return usersStore.users[Math.floor(Math.random() * usersStore.users.length)]
+    }
 </script>
 <template>
     <div class="flex justify-center content-center">
@@ -35,10 +44,7 @@
             <input v-model="email" name="email" type="email" class="input input-bordered w-full rounded-full" placeholder="Email" required autocomplete="email"/>
             <input v-model="password" name="password" type="password" class="input input-bordered w-full rounded-full" placeholder="Password" required/>
             <button type="submit" class="btn btn-primary rounded-full w-full">Login</button>
-            <div class="max-md:hidden">
-                <b>Registered users:</b>
-                <div v-for="user in usersStore.users" :key="user.id">{{ user.email }}</div>
-            </div>
+            <button type="button" class="btn btn-neutral rounded-full w-full" @click="randomLogin()">Random Login</button>
         </form>
     </div>
 </template>
