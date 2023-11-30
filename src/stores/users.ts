@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { computed, ref } from "vue";
+import { computed, ref, watchEffect } from "vue";
 
 export const useUsersStore = defineStore('users', () => {
     const rawUsers = ref<User[]>([])
@@ -8,7 +8,6 @@ export const useUsersStore = defineStore('users', () => {
     .then(res => res.json())
     .then(data => {
         rawUsers.value = data
-        console.log(rawUsers.value)
     })
 
     const users = computed(() => {
@@ -19,11 +18,18 @@ export const useUsersStore = defineStore('users', () => {
     })
 
     const usersByRank = computed(() => {
-        return users.value.sort( (a, b) => a.postsAmount <= b.postsAmount ? 1 : -1)
+        return [...users.value].sort( (a, b) => {
+            if (a.postsAmount < b.postsAmount) {
+                return 1
+            } else if (a.postsAmount > b.postsAmount) {
+                return -1
+            }
+            
+            return 0
+        })
     })
 
     function getUser(userId: number) {
-        console.log(rawUsers.value)
         const foundUser = rawUsers.value.find(user=> user.id == userId)
         return foundUser
     }
@@ -38,7 +44,17 @@ export const useUsersStore = defineStore('users', () => {
         posts.value.push(post)
     }
 
-    return { users, usersByRank, getUser, posts, newPost }
+    const bestRanks = ref<number[]>([])
+
+    watchEffect(async () => {
+        usersByRank.value.map((user, index) => {
+            if (!user.bestRank || user.bestRank > index) {
+                user.bestRank = index
+            }
+        })
+    })
+
+    return { users, usersByRank, bestRanks, getUser, posts, newPost }
 })
 
 export class User {
@@ -46,6 +62,7 @@ export class User {
     name?: string;
     email?: string;
     postsAmount = 0;
+    bestRank?: number;
 }
 
 export class Post {

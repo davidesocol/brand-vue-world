@@ -1,7 +1,7 @@
 <script setup lang="ts">
     import { useLoginStore } from '@/stores/login'
     import { useUsersStore } from '@/stores/users'
-    import { computed, ref } from 'vue'
+    import { ref } from 'vue'
 
     const loginStore = useLoginStore()
 
@@ -22,7 +22,8 @@
 </script>
 <template>
     <div class="flex justify-center content-center">
-        <form @submit.prevent="login()" class="w-80 space-y-4 my-32">
+        <form @submit.prevent="login()" class="w-80 space-y-4 my-8 lg:my-16">
+            <h1 class="text-5xl font-bold w-full text-center mb-8">Login</h1>
             <div v-if="showAlert" role="alert" class="alert alert-error">
                 <span><b>{{ email }}</b> is not a registered user.</span>
                 <button type="reset" @click="showAlert = false" class="btn btn-sm btn-ghost">
@@ -34,9 +35,9 @@
             <input v-model="email" name="email" type="email" class="input input-bordered w-full rounded-full" placeholder="Email" required autocomplete="email"/>
             <input v-model="password" name="password" type="password" class="input input-bordered w-full rounded-full" placeholder="Password" required/>
             <button type="submit" class="btn btn-primary rounded-full w-full">Login</button>
-            <div>
+            <div class="max-md:hidden">
                 <b>Registered users:</b>
-                <div v-for="user in usersStore.users">{{ user.email }}</div>
+                <div v-for="user in usersStore.users" :key="user.id">{{ user.email }}</div>
             </div>
         </form>
     </div>

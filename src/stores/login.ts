@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
-import { computed, ref, type Ref } from "vue";
-import { useUsersStore, User } from "./users";
+import { computed, ref } from "vue";
+import { useUsersStore } from "./users";
 
 export const useLoginStore = defineStore('login', () => {
     const loggedUserId = ref(-1)
