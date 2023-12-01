@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
 import { computed, ref, watchEffect } from "vue";
+import { useLoginStore } from "./login";
 
 export const useUsersStore = defineStore('users', () => {
     const rawUsers = ref<User[]>([])
@@ -10,23 +11,73 @@ export const useUsersStore = defineStore('users', () => {
         rawUsers.value = data
     })
 
+    let latestUpdate = new Date(0)
+    const updateLimit = 5000
+
     const users = computed(() => {
-        return rawUsers.value.map(user => {
+        let rankedUsers = [...rawUsers.value]
+    
+        rankedUsers = rankedUsers.map((user, index) => {
             user.postsAmount = posts.value.filter(post => post.userId == user.id).length
             return user
         })
-    })
 
-    const usersByRank = computed(() => {
-        return [...users.value].sort( (a, b) => {
+        const loginStore = useLoginStore()
+
+        rankedUsers.sort( (a, b) => {
             if (a.postsAmount < b.postsAmount) {
                 return 1
             } else if (a.postsAmount > b.postsAmount) {
                 return -1
             }
-            
-            return 0
+
+            if (a.id == loginStore.loggedUserId) {
+                return -1
+            } else if (a.id! < b.id!) {
+                return 1
+            } else {
+                return -1
+            }
         })
+
+        rankedUsers = rankedUsers.map((user, index) => {
+            const rankedUser = user;
+            
+            if (index == 0) {
+                rankedUser.rank = 1
+                return rankedUser
+            }
+
+            const prevUser = rankedUsers[index - 1]
+
+            if (user.postsAmount == prevUser.postsAmount) {
+                rankedUser.rank = prevUser.rank
+            } else {
+                rankedUser.rank = index + 1
+            }
+
+            return rankedUser
+        })
+
+        return rankedUsers
+    })
+
+    const ranks = computed(() => {
+        let groupedUsers: {id: number, users: User[]}[] = []
+
+        users.value.forEach(user => {
+            const rankId = groupedUsers.findIndex(rank => rank.id == user.rank)
+            if (rankId < 0) {
+                groupedUsers.push({
+                    id: user.rank!,
+                    users: [user]
+                })
+            } else {
+                groupedUsers[rankId].users.push(user)
+            }
+        })
+
+        return groupedUsers
     })
 
     function getUser(userId: number) {
@@ -44,17 +95,15 @@ export const useUsersStore = defineStore('users', () => {
         posts.value.push(post)
     }
 
-    const bestRanks = ref<number[]>([])
-
     watchEffect(async () => {
-        usersByRank.value.map((user, index) => {
-            if (!user.bestRank || user.bestRank > index) {
-                user.bestRank = index
+        users.value.map(user => {
+            if (!user.bestRank || user.bestRank > user.rank!) {
+                user.bestRank = user.rank
             }
         })
     })
 
-    return { users, usersByRank, bestRanks, getUser, posts, newPost }
+    return { users, ranks, getUser, posts, newPost }
 })
 
 export class User {
@@ -62,7 +111,9 @@ export class User {
     name?: string;
     email?: string;
     postsAmount = 0;
+    rank?: number;
     bestRank?: number;
+    betterUsers?: number;
 }
 
 export class Post {

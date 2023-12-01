@@ -32,7 +32,7 @@
 <template>
     <div class="flex justify-center content-center">
         <form @submit.prevent="login()" class="w-80 space-y-4 my-8 lg:my-16">
-            <h1 class="text-5xl font-bold w-full text-center mb-8">Login</h1>
+            <h1 class="text-5xl font-bold w-full text-center mb-8 max-md:hidden">Login</h1>
             <div v-if="showAlert" role="alert" class="alert alert-error">
                 <span><b>{{ email }}</b> is not a registered user.</span>
                 <button type="reset" @click="showAlert = false" class="btn btn-sm btn-ghost">

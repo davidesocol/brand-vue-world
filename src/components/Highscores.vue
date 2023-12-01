@@ -1,26 +1,29 @@
 <script setup lang="ts">
     import { useLoginStore } from '@/stores/login';
     import { useUsersStore } from '@/stores/users';
-    import { watchEffect } from 'vue';
     const usersStore = useUsersStore()
     const loginStore = useLoginStore()
-
-    watchEffect(async () => {
-        // TODO: Fix. Animation of the ranking occurs only if usersByRank is already accessed before
-        usersStore.usersByRank
-    })
 </script>
 <template>
-    <div class="overflow-x-hidden">
+    <div>
         <table class="table">
             <TransitionGroup name="ranking" tag="tbody">
-                <tr v-for="(user, index) in usersStore.usersByRank" :key="user.id" :class="[index <= 2 ? 'rank-' + (index + 1): '', user.id == loginStore.loggedUserId ? 'rank-you' : '']">
-                    <td class="text-lg text-right">
-                        {{ index + 1 }}°
+                <tr v-for="rank in usersStore.ranks" :key="rank.id" class="rank" :class="rank.id! <= 3 ? 'rank-' + rank.id: ''">
+                    <td class="text-lg text-right rank-num">
+                        <div class="stat-value">
+                            {{ rank.id }}°
+                        </div>
+                        <div class="stat-desc" v-if="rank.users.find(user => user.id == loginStore.loggedUserId)">
+                            <div class="badge badge-primary">YOU</div>
+                        </div>
                     </td>
-                    <td class="stat">
-                        <div class="stat-title">{{ user.name }}</div>
-                        <div class="stat-desc">{{ user.postsAmount }} posts</div>
+                    <td>
+                        <TransitionGroup name="user">
+                            <div v-for="user in rank.users" :key="user.id" :class="user.id == loginStore.loggedUserId ? 'rank-you' : ''">
+                                <div class="stat-title text-bg">{{ user.name }}</div>
+                                <div class="stat-desc font-bold">{{ user.postsAmount }} posts</div>
+                            </div>
+                        </TransitionGroup>
                     </td>
                 </tr>
             </TransitionGroup>
@@ -36,35 +39,53 @@
     .ranking-move,
     .ranking-enter-active,
     .ranking-leave-active {
-        transition: all 0.5s ease;
+        transition: all .8s ease;
     }
 
     .ranking-enter-from,
     .ranking-leave-to {
         opacity: 0;
-        transform: translateX(30px);
+        transform: translateX(-30px);
     }
 
     .ranking-leave-active {
         position: absolute;
     }
 
+    .user-enter {
+        opacity: 0;
+    }
+
+    .user-move,
+    .user-enter-active,
+    .user-leave-active {
+        transition: all .2s ease;
+    }
+
+    .user-enter-from,
+    .user-leave-to {
+        opacity: 0;
+        transform: translateY(16px);
+    }
+
+    .user-leave-active {
+        position: absolute;
+    }
+
     .rank-1 {
         color: gold;
-        font-weight: 800;
+        @apply text-xl;
     }
 
     .rank-2 {
         color: paleturquoise;
-        font-weight: 700;
     }
 
     .rank-3 {
         color: indianred;
-        font-weight: 600;
     }
 
-    .rank-you *{
-        @apply bg-primary text-black
+    .rank-you * {
+        @apply text-primary
     }
 </style>
