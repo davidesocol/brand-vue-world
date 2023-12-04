@@ -27,7 +27,7 @@ import { computed, ref } from 'vue';
             return false
         }
         if (opponent.postsAmount > postsNeededToSurpass.value + user.value!.postsAmount) {
-            console.log(opponent.name, opponent.postsAmount)
+            return false
         }
 
         return true
@@ -64,9 +64,9 @@ import { computed, ref } from 'vue';
     }
 </script>
 <template>
-    <div class="hero flex items-center w-full h-full">
-        <div class="hero-content flex-col w-full h-[100vh] items-center" v-if="!showForm">
-            <div class="flex w-full justify-between items-center">
+    <div class="w-full h-full">
+        <div class="w-full h-[100vh]" v-if="!showForm">
+            <div class="flex w-full justify-between items-center p-4 md:p-8">
                 <h1 class="text-3xl md:text-5xl font-bold">
                     {{ user?.name }}
                 </h1>
@@ -76,42 +76,46 @@ import { computed, ref } from 'vue';
                     </svg>
                 </button>
             </div>
-            <div class="stats stats-vertical shadow md:my-16 max-md:w-full">
-                <div class="stat place-items-center">
-                    <div class="stat-title">Ranking</div>
-                    <div class="stat-value">{{ user!.rank!}}°</div>
-                    <div class="stat-desc" v-if="user!.bestRank && user!.bestRank < userIndex">You've been {{ user!.bestRank! + 1}} ° before, get back to posting!</div>
-                    <div class="stat-desc" v-if="user!.bestRank && userIndex <= user!.bestRank">You've never been higher rank, keep posting!</div>
-                    <div class="stat-desc" v-if="userIndex == 0">You are 1°, keep posting before the others catch up!</div>
+            <div class="flex items-center justify-center w-full">
+                <div class="stats stats-vertical shadow my-4 sm:my-16">
+                    <div class="stat place-items-center">
+                        <div class="stat-title">Ranking</div>
+                        <div class="stat-value">{{ user!.rank!}}°</div>
+                        <div class="stat-desc whitespace-normal" v-if="user!.bestRank && user!.bestRank < userIndex">You've been {{ user!.bestRank! + 1}} ° before, get back to posting!</div>
+                        <div class="stat-desc whitespace-normal" v-if="user!.bestRank && userIndex <= user!.bestRank">You've never been higher rank, keep posting!</div>
+                        <div class="stat-desc whitespace-normal" v-if="userIndex == 0">You are 1°, keep posting before the others catch up!</div>
+                    </div>
+                    <div class="stat place-items-center">
+                        <div class="stat-title">To Next Rank</div>
+                        <div class="stat-value">{{ userIndex > 0 ? postsNeededToSurpass : '-' }}</div>
+                        <div class="stat-desc whitespace-normal" v-if="userIndex > 0">Post{{ postsNeededToSurpass > 1 ? 's' : ''}} needed to surpass {{ nextUser.name }} <span v-if="usersSurpassed > 1">and {{ usersSurpassed - 1 }} others</span></div>
+                        <div class="stat-desc whitespace-normal" v-else>You are first! Keep posting before {{ usersStore.users[1].name }} catches up!</div>
+                    </div>
+                    <div class="stat place-items-center">
+                        <div class="stat-title">Watch out for</div>
+                        <div class="stat-value whitespace-normal text-2xl">{{ userBelow.name }}</div>
+                        <div class="stat-desc whitespace-normal" v-if="userIndex > 0">They need {{ userBelowDistance }} post{{ userBelowDistance > 1 ? 's' : '' }} to get you!</div>
+                    </div>
+                    <div class="stat place-items-center">
+                        <div class="stat-title">Total Posts</div>
+                        <div class="stat-value">{{ user?.postsAmount }}</div>
+                        <div class="stat-desc">Keep posting!</div>
+                    </div>
+                    <button class="btn btn-primary rounded-full m-4 w-auto" @click="showForm = true">Add New Post</button>
                 </div>
-                <div class="stat place-items-center">
-                    <div class="stat-title">To Next Rank</div>
-                    <div class="stat-value">{{ userIndex > 0 ? postsNeededToSurpass : '-' }}</div>
-                    <div class="stat-desc" v-if="userIndex > 0">Post{{ postsNeededToSurpass > 1 ? 's' : ''}} needed to surpass {{ nextUser.name }} <span v-if="usersSurpassed > 1">and {{ usersSurpassed - 1 }} others</span></div>
-                    <div class="stat-desc" v-else>You are first! Keep posting before {{ usersStore.users[1].name }} catches up!</div>
-                </div>
-                <div class="stat place-items-center">
-                    <div class="stat-title">Watch out for</div>
-                    <div class="stat-value whitespace-normal">{{ userBelow.name }}</div>
-                    <div class="stat-desc" v-if="userIndex > 0">They need {{ userBelowDistance }} post{{ userBelowDistance > 1 ? 's' : '' }} to get you!</div>
-                </div>
-                <div class="stat place-items-center">
-                    <div class="stat-title">Total Posts</div>
-                    <div class="stat-value">{{ user?.postsAmount }}</div>
-                    <div class="stat-desc">Keep posting!</div>
-                </div>
-                <button class="btn btn-primary rounded-full m-4 w-auto" @click="showForm = true">Add New Post</button>
             </div>
         </div>
-        <div class="hero-content flex-col w-full" v-else>
-            <div class="flex justify-center content-center">
-                <form ref="postForm" @submit.prevent="post()" class="w-full max-w-md space-y-4 my-32">
-                    <h1 class="text-3xl font-bold text-center">New Post</h1>
-                    <input v-model="title" name="title" type="text" class="input input-bordered w-full rounded-bg" placeholder="Title" required minlength="1"/>
-                    <textarea v-model="body" name="body" type="text" class="textarea textarea-bordered w-full" placeholder="What's on your mind?" required minlength="1"></textarea>
-                    <button type="submit" class="btn btn-primary rounded-full w-full">Post</button>
-                    <button type="button" class="btn btn-neutral rounded-full w-full" @click="cancelPost()">Cancel</button>
-                </form>
+        <div class="w-full h-[100vh]" v-else>
+            <div class="flex items-center justify-center w-full">
+                <div class="flex justify-center content-center mx-4">
+                    <form ref="postForm" @submit.prevent="post()" class="w-full max-w-md space-y-4 my-32">
+                        <h1 class="text-3xl font-bold text-center">New Post</h1>
+                        <input v-model="title" name="title" type="text" class="input input-bordered w-full rounded-bg" placeholder="Title" required minlength="1"/>
+                        <textarea v-model="body" name="body" type="text" class="textarea textarea-bordered w-full" placeholder="What's on your mind?" required minlength="1"></textarea>
+                        <button type="submit" class="btn btn-primary rounded-full w-full">Post</button>
+                        <button type="button" class="btn btn-neutral rounded-full w-full" @click="cancelPost()">Cancel</button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>

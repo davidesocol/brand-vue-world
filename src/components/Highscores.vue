@@ -20,7 +20,7 @@
                     <td>
                         <TransitionGroup name="user">
                             <div v-for="user in rank.users" :key="user.id" :class="user.id == loginStore.loggedUserId ? 'rank-you' : ''">
-                                <div class="stat-title text-bg">{{ user.name }}</div>
+                                <div class="stat-title text-bg whitespace-normal">{{ user.name }}</div>
                                 <div class="stat-desc font-bold">{{ user.postsAmount }} posts</div>
                             </div>
                         </TransitionGroup>
@@ -39,7 +39,7 @@
     .ranking-move,
     .ranking-enter-active,
     .ranking-leave-active {
-        transition: all .8s ease;
+        transition: all .5s ease;
     }
 
     .ranking-enter-from,

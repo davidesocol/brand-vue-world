@@ -11,10 +11,10 @@ const loginStore = useLoginStore()
 
 <template>
   <div class="grid md:grid-cols-10 w-[100vw] max-w-full overflow-x-hidden">
-    <div class="col-span-5 md:col-span-3 max-md:h-[50vh] max-w-full overflow-y-auto overflow-x-hidden max-md:shadow-[inset_0_-35px_60px_-15px_rgba(0,0,0,0.3)] ">
+    <div class="col-span-5 md:col-span-3 xl:col-span-2 max-md:h-[40vh] max-w-full overflow-y-auto overflow-x-hidden max-md:shadow-[inset_0_-35px_60px_-15px_rgba(0,0,0,0.3)] ">
       <HighScores />
     </div>
-    <div class="col-span-5 md:col-span-7 min-h-[50vh] md:h-[100vh] max-w-full overflow-x-hidden main-content">
+    <div class="col-span-5 md:col-span-7 xl:col-span-8 min-h-[60vh] md:h-[100vh] max-w-full overflow-x-hidden grid content-center main-content">
       <template v-if="!loginStore.isLoggedIn">
         <LoginPage/>
       </template>
