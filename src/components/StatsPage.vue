@@ -123,7 +123,7 @@
                 </button>
             </div>
             <div class="flex items-center justify-center w-full">
-                <div class="stats stats-vertical shadow my-4 sm:my-16">
+                <div class="stats stats-vertical shadow m-4 sm:my-16">
                     <div class="stat place-items-center">
                         <div class="stat-title">Ranking</div>
                         <div class="stat-value">{{ user!.rank!}}°</div>

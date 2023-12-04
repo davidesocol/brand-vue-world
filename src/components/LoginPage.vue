@@ -15,7 +15,7 @@
 
     function login() {
         loginStore.login(email.value, password.value)
-        if (loginStore.isLoggedIn) {
+        if (!loginStore.isLoggedIn) {
             showAlert.value = true
         }
     }
