@@ -29,23 +29,26 @@ import { ref } from 'vue';
     
     setInterval(() => {
         if (simulateUsers.value) {
-            const pickedUser = pickRandomUser()
+            for (let i=0; i<10; i++) {
 
-            if (!pickedUser) return
-
-            const baseChance = 0.2
-
-            const userChance = pickedUser.id! / usersStore.users.length * 0.2
-            
-            if (Math.random() < baseChance + userChance) {
-                usersStore.newPost({
-                    userId: pickedUser.id,
-                    title: "Debug Title",
-                    body: "Debug Body",
-                })
+                const pickedUser = pickRandomUser()
+                
+                if (!pickedUser) return
+                
+                const baseChance = 0.2
+                
+                const userChance = pickedUser.id! / usersStore.users.length * 0.2
+                
+                if (Math.random() < baseChance + userChance) {
+                    usersStore.newPost({
+                        userId: pickedUser.id,
+                        title: "Debug Title",
+                        body: "Debug Body",
+                    })
+                }
             }
         }
-    }, 1000)
+    }, 5000)
 
     function toggleSimulation() {
         simulateUsers.value = !simulateUsers.value

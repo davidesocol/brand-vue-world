@@ -21,7 +21,7 @@ const loginStore = useLoginStore()
       <div v-if="loginStore.isLoggedIn">
           <StatsPage />
       </div>
-      <DebugBar class="absolute bottom-0 max-md:hidden" />
+      <DebugBar class="fixed bottom-0 overflow-x-scroll" />
     </div>
   </div>
 </template>

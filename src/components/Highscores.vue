@@ -7,16 +7,16 @@
 <template>
     <div>
         <table class="table">
-            <TransitionGroup name="ranking" tag="tbody">
-                <tr v-for="rank in usersStore.ranks" :key="rank.id" class="rank" :class="rank.id! <= 3 ? 'rank-' + rank.id: ''">
-                    <td class="text-lg text-right rank-num">
+            <TransitionGroup name="ranking" tag="tbody" :style="{'--total': usersStore.ranks.length}">
+                <tr v-for="(rank, i) in usersStore.ranks" :key="rank.id" :data-index="rank.id" class="rank w-full" :class="[rank.id! <= 3 ? 'rank-' + rank.id: '', {'--i': i}]">
+                    <td class="text-lg text-right rank-num w-[80px] overflow-x-hidden">
                         <div class="stat-value">
                             {{ rank.id }}°
                         </div>
                     </td>
                     <td>
                         <TransitionGroup name="user">
-                            <div v-for="user in rank.users" :key="user.id" :class="user.id == loginStore.loggedUserId ? 'rank-you' : ''">
+                            <div v-for="user in rank.users" :key="user.id" :data-index="user.id" :class="user.id == loginStore.loggedUserId ? 'rank-you' : ''">
                                 <div class="stat-title text-bg whitespace-normal">{{ user.name }}</div>
                                 <div class="stat-desc font-bold">{{ user.postsAmount }} posts</div>
                             </div>
@@ -29,20 +29,31 @@
 </template>
 
 <style scoped>
-    .ranking-enter {
-        opacity: 0;
+    .rank {
+        @apply bg-neutral;
     }
-
     .ranking-move,
     .ranking-enter-active,
     .ranking-leave-active {
-        transition: all .5s ease;
+        transition: all .4s ease;
+        transform-origin: top;
+        transform:scaleY(1);
+        overflow-y: hidden;
+    }
+
+    .ranking-enter-active {
+        transition-delay: calc(0.1s * var(--i));
+    }
+
+    .ranking-leave-active {
+        transition-delay: calc(0.1s * (var(--total) - var(--i)));
     }
 
     .ranking-enter-from,
     .ranking-leave-to {
-        opacity: 0;
-        transform: translateX(-30px);
+        transform-origin: top;
+        transform:scaleY(0);
+        overflow-y: hidden;
     }
 
     .ranking-leave-active {
