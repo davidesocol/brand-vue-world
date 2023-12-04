@@ -25,7 +25,7 @@ import { ref } from 'vue';
         return usersStore.users[Math.floor(Math.random() * usersStore.users.length)]
     }
 
-    const simulateUsers = ref(true)
+    const simulateUsers = ref(false)
     
     setInterval(() => {
         if (simulateUsers.value) {

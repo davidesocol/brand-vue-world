@@ -11,9 +11,6 @@ export const useUsersStore = defineStore('users', () => {
         rawUsers.value = data
     })
 
-    let latestUpdate = new Date(0)
-    const updateLimit = 5000
-
     const users = computed(() => {
         let rankedUsers = [...rawUsers.value]
     
@@ -33,6 +30,8 @@ export const useUsersStore = defineStore('users', () => {
 
             if (a.id == loginStore.loggedUserId) {
                 return -1
+            } else if (b.id == loginStore.loggedUserId){
+                return 1
             } else if (a.id! < b.id!) {
                 return 1
             } else {

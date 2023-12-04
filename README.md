@@ -10,6 +10,8 @@ https://davidesocol.github.io/brand-vue-world/
 
 [Pinia](https://pinia.vuejs.org/)
 
+[vue-confetti-explosion](https://www.npmjs.com/package/vue-confetti-explosion)
+
 # Test users (any password)
 Rey.Padberg@karina.biz
 
