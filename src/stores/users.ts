@@ -88,7 +88,19 @@ export const useUsersStore = defineStore('users', () => {
 
     fetch('https://jsonplaceholder.typicode.com/posts')
     .then(res => res.json())
-    .then(data => (posts.value = data))
+    .then(data => {
+        posts.value = data;
+
+        let dupedPosts: Post[] = [];
+        posts.value.forEach(post => {
+            const randomAmount = Math.floor(Math.random() * 2)
+            for(let i=0; i < randomAmount; i++) {
+                dupedPosts.push(post)
+            }
+        })
+
+        posts.value = posts.value.concat(dupedPosts)
+    })
 
     function newPost(post: Post) {
         posts.value.push(post)
