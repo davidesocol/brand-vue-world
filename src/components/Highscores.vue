@@ -13,9 +13,6 @@
                         <div class="stat-value">
                             {{ rank.id }}°
                         </div>
-                        <div class="stat-desc" v-if="rank.users.find(user => user.id == loginStore.loggedUserId)">
-                            <div class="badge badge-primary rounded-full">YOU</div>
-                        </div>
                     </td>
                     <td>
                         <TransitionGroup name="user">
@@ -108,7 +105,19 @@
         @apply text-black
     }
 
-    .rank-you .stat-title{
-        @apply bg-primary rounded-full pl-[18px] ml-[-18px] py-1 text-black;
+    .rank-you .stat-title {
+        @apply bg-primary text-black font-bold rounded-full pl-[18px] ml-[-18px] py-1;
+    }
+
+    .rank-1 .rank-you .stat-title {
+        @apply bg-black text-base-content
+    }
+
+    .rank-2 .rank-you .stat-title {
+        @apply bg-black text-base-content
+    }
+
+    .rank-3 .rank-you .stat-title {
+        @apply bg-black text-base-content
     }
 </style>
