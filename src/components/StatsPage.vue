@@ -107,7 +107,7 @@
                     <button class="btn rounded-full my-8" @click="showPodiumMessage = false; showFirstMessage = false">Keep Posting!</button>
                 </div>
             </div>
-            <ConfettiExplosion v-if="showFirstMessage"/>
+            <ConfettiExplosion :force="1" :duration="5000" :particleCount="250" :stageHeight="1200" :stageWidth="2000" v-if="showFirstMessage"/>
         </div>
     </Transition>
     <div class="w-full h-full" v-if="!showPodiumMessage && !showFirstMessage">
@@ -192,7 +192,7 @@
     .splash-move,
     .splash-enter-active,
     .splash-leave-active {
-        transition: all 1s ease;
+        transition: all .6s ease;
     }
 
     .splash-enter-from,
